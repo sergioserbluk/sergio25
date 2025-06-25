@@ -15,7 +15,7 @@ paso 2
 
 from google import genai
 
-client = genai.Client(api_key="AIzaSyD-61XFU-h9JICDptO8WHYu7DaLAVDaBOM")
+client = genai.Client(api_key="Tu_api_key")
 
 response = client.models.generate_content(
     model="gemini-2.0-flash",
