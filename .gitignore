@@ -1,0 +1,3 @@
+//en este archivo se especifican los archivos y carpetas que no se deben subir al repositorio de git
+.env
+/img

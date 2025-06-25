@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Centro de estudiantes</title>
+</head>
+<body>
+    <header>
+        <div class="headerimglogo"><img src="./img/logoesvo.png" alt="logo de la escuela" ></div>
+        <div class="headertitulo"><h1>ESVO Centro de Estudiantes        </h1></div>
+        <div class="headerimgcentro"><img src="#" alt="logo del centro"> </div>
+        
+    </header>
+    <aside>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Eventos</a></li>
+                <li><a href="#">Comunicados</a></li>
+                <li><a href="#">en accion</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+    </aside>
+    <section>
+        <h2>En accion</h2>
+        <p>En esta seccion se mostraran las actividades que realizamos como centro de estudiantes</p>
+        <article>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Actividad 1</h3>
+                </div>
+                <div class="card-image">
+                    <img src="#" alt="imagen de la actividad 1">
+                </div>
+                <div class="card-content">
+                    <p>Descripcion de la actividad 1</p>
+                </div>
+            </div>
+        </article>
+
+    </section>
+    <footer>
+        <form action="contacto.php" method="post">
+            <h2>dejanos tu mensaje</h2>
+            <br>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <br>
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" name="mensaje" required></textarea>
+            <br>
+            <button type="submit">Enviar</button>
+        </form>
+        <div class="social-media">
+            <a href="#"><img src="#" alt="Facebook"></a>
+            <a href="#"><img src="#" alt="Instagram"></a>
+            <a href="#"><img src="#" alt="Twitter"></a>
+            </div>  
+        <div class="copiright">
+            <p>&copy; 2023 Centro de Estudiantes ESVO. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

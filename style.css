@@ -1,0 +1,128 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+}
+
+body{
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+h1{
+    text-align: center;
+    margin: 20px 0;
+}
+header{
+    /* quiero que el header tenga un fondo azul */
+    background-color: #007BFF;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    height: 200px; /* altura del header */
+    position: relative; /* para que los elementos flotantes se posicionen correctamente */
+}
+aside{
+    /* quiero que el aside tenga un fondo gris */
+    background-color: #f8f9fa;
+    padding: 20px;
+
+    width: 200px; /* ancho del aside */
+    height: 700px; /* altura del aside */
+    float: left; /* flota a la izquierda */
+    
+}
+nav{
+    /* quiero que el nav tenga un fondo gris */
+    background-color: #f8f9fa;
+    padding: 20px;
+    width: 200px; /* ancho del nav */
+    float: left; /* flota a la izquierda */
+    
+}
+aside nav ul{
+    list-style: none; /* quito los puntos de la lista */
+    padding: 0; /* quito el padding */
+}
+aside nav ul li{
+    margin: 10px 0; /* margen entre los elementos de la lista */
+}
+aside nav ul li a{
+    text-decoration: none; /* quito el subrayado de los enlaces */
+    color: #007BFF; /* color de los enlaces */
+    font-weight: bold; /* negrita */
+}
+section{
+    /* quiero que el section tenga un fondo blanco */
+    background-color: white;
+    padding: 20px;
+    margin: 20px; /* margen entre el section y el aside */
+    width: calc(100% - 240px); /* ancho del section */
+    float: left; /* flota a la izquierda */
+}
+footer {
+    background-color: #007BFF;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    height: 200px; /* altura del footer */
+    clear: both; /* Para evitar que flote debajo de elementos flotantes */
+}
+footer form{
+    /* quiero que el form flote a la izquierda en el footer */
+    float: left;
+    margin: 10px;
+}
+.social-media{
+    /* quiero que aparezca en el centro del footer */
+    width: 40%;
+    float: none; /* no flota */
+    text-align: center;
+    margin: auto;
+}
+.copiright{
+    /* quiero que aparezca a la derecha del footer */
+    width: 30%;
+    float: right;
+    margin: 10px;
+    text-align: right;
+  
+}
+.headerimglogo{
+    /* quiero que flote dentro del header a la izquierda */
+    float: left;
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+
+}
+.headertitulo{
+    /* quiero que aparesca en el centro */
+    text-align: center;
+    margin: 10px;
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+
+}
+.headerimgcentro{
+    /* quiero que flote dentro del header a la derecha */
+    float: right;
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+}
+.card{
+    /* quiero que el card tenga un fondo blanco */
+    background-color: white;
+    padding: 20px;
+    margin: 20px; /* margen entre el card y el aside */
+    width: calc(100% - 240px); /* ancho del card */
+    float: left; /* flota a la izquierda */
+    border-radius: 10px; /* bordes redondeados */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* sombra */
+}

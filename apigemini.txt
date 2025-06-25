@@ -1,0 +1,41 @@
+
+
+
+paso 1
+
+pip install -q -U google-genai
+
+pip: El gestor de paquetes de Python.
+install: El comando para instalar un paquete.
+-q: Modo silencioso (quiet), reduce la cantidad de salida mostrada durante la instalación.
+-U: Actualiza el paquete a la última versión disponible.
+google-genai: El nombre del paquete que se va a instalar o actualizar.
+
+paso 2
+
+from google import genai
+
+client = genai.Client(api_key="AIzaSyD-61XFU-h9JICDptO8WHYu7DaLAVDaBOM")
+
+response = client.models.generate_content(
+    model="gemini-2.0-flash",
+    contents="Explain how AI works",
+)
+
+print(response.text)
+
+from: Importa un módulo o una función de un módulo.
+google: El paquete de Google que contiene el módulo genai.
+genai: El módulo de Google que proporciona funcionalidades relacionadas con la inteligencia artificial.
+Client: La clase que se utiliza para interactuar con la API de GenAI.
+api_key: La clave de API necesaria para autenticar las solicitudes a la API de GenAI.
+models.generate_content: El método que se utiliza para generar contenido utilizando un modelo de lenguaje.
+model: El nombre del modelo de lenguaje que se va a utilizar para generar contenido.
+contents: El texto de entrada que se va a utilizar como base para generar contenido.
+response.text: El texto generado por el modelo de lenguaje.
+para que la respuesta sea correcta, se debe proporcionar una clave de API válida y un texto de entrada adecuado.
+si queremos recibir una respuesta más detallada, podemos utilizar el método response.json() en lugar de response.text.
+response.json() devolverá un diccionario con la respuesta completa de la API, que incluye información adicional como la probabilidad de la respuesta y el tiempo de ejecución del modelo.
+si queremos generar contenido en otro idioma, podemos especificar el parámetro language en el método models.generate_content con el código de idioma correspondiente (por ejemplo, "es" para español).
+si queremos generar contenido con un estilo específico, podemos especificar el parámetro style en el método models.generate_content con el nombre del estilo deseado (por ejemplo, "formal" para un estilo formal).
+si queremos generar contenido en un formato específico, podemos especificar el parámetro format en el método models.generate_content con el nombre del formato deseado (por ejemplo, "markdown" para un formato de Markdown).
