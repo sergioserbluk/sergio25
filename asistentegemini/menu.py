@@ -24,6 +24,28 @@ class MenuOption:
     handler: Callable[[], None]
 
 
+WRITING_STYLES: Dict[str, str] = {
+    "Formal": "Un estilo profesional y objetivo, ideal para documentos oficiales",
+    "Casual": "Un tono relajado y conversacional, perfecto para comunicación informal",
+    "Técnico": "Preciso y detallado, enfocado en aspectos técnicos y específicos",
+    "Persuasivo": "Convincente y argumentativo, diseñado para influir en el lector",
+    "Narrativo": "Estilo de historia, con desarrollo de eventos y descripción vívida",
+    "Poético": "Lenguaje figurativo y expresivo, con énfasis en la belleza del lenguaje",
+    "Humorístico": "Tono ligero y divertido, con elementos de comedia",
+    "Académico": "Riguroso y analítico, apropiado para contextos educativos",
+}
+
+CONTENT_DESTINATIONS: Dict[str, str] = {
+    "Correo electrónico": "Para comunicación profesional o personal por email",
+    "Redes sociales": "Para publicaciones en plataformas sociales",
+    "Foro de discusión": "Para participar en debates y discusiones en línea",
+    "Blog": "Para artículos y publicaciones de blog",
+    "Ensayo": "Para trabajos académicos o análisis profundos",
+    "Mensaje instantáneo": "Para comunicación rápida y directa",
+    "Presentación": "Para diapositivas y presentaciones",
+    "Documentación": "Para manuales y documentación técnica",
+}
+
 EXAMPLE_TEXTS: Dict[str, Dict[str, str]] = {
     "Cuento de misterio": {
         "descripcion": "Refuerza el suspenso y los detalles inquietantes.",
@@ -83,9 +105,8 @@ def _consulta_gemini(prompt: str) -> str:
     """Normaliza el prompt con un contexto común antes de llamar a Gemini."""
 
     contexto = (
-        "Soy tu asistente virtual que apoya una feria tecnológica. "
-        "Responde siempre en español y ofrece sugerencias aplicables al "
-        "trabajo en equipo."
+        "Soy un asistente virtual. Responde siempre en español de manera clara y "
+        "precisa."
     )
     prompt_completo = f"{contexto}\n\n{prompt.strip()}"
     return obtener_respuesta(prompt_completo)
@@ -96,13 +117,29 @@ def _mostrar_respuesta(titulo: str, contenido: str) -> None:
 
     separador = "=" * len(titulo)
     print(f"\n{titulo}\n{separador}")
-    # Divide el contenido en párrafos y aplica el wrapping a cada uno
-    parrafos = contenido.split("\n")
-    for parrafo in parrafos:
-        if parrafo.strip():
-            print(textwrap.fill(parrafo, width=78))
-        else:
-            print()
+    
+    # Divide el contenido en secciones y párrafos
+    secciones = contenido.split("\n\n")
+    for seccion in secciones:
+        # Procesa cada línea de la sección
+        lineas = seccion.split("\n")
+        for linea in lineas:
+            # Si es un encabezado (en mayúsculas y termina con :), no aplicar wrap
+            if linea.isupper() and linea.endswith(":"):
+                print(f"\n{linea}")
+            # Si es una lista con viñetas, preservar la indentación
+            elif linea.lstrip().startswith(("*", "-", "•")):
+                indentacion = len(linea) - len(linea.lstrip())
+                texto_envuelto = textwrap.fill(linea.lstrip(), width=74, 
+                                             initial_indent=" " * indentacion,
+                                             subsequent_indent=" " * (indentacion + 2))
+                print(texto_envuelto)
+            # Para el resto del texto, aplicar wrap normal
+            elif linea.strip():
+                print(textwrap.fill(linea, width=78))
+            else:
+                print()
+        print()  # Espacio entre secciones
     print()
 
 
@@ -191,14 +228,40 @@ def handle_text_rewrite() -> None:
         print("No se recibió texto para procesar.")
         return
 
-    estilo = input("Indique el estilo deseado (por ejemplo 'tono institucional'): ").strip()
+    # Selección de estilo narrativo
+    print("\nEstilos de escritura disponibles:")
+    for idx, (estilo, descripcion) in enumerate(WRITING_STYLES.items(), 1):
+        print(f"{idx}) {estilo}: {descripcion}")
+    
+    while True:
+        seleccion_estilo = input("\nSeleccione el número del estilo deseado: ").strip()
+        if seleccion_estilo.isdigit() and 1 <= int(seleccion_estilo) <= len(WRITING_STYLES):
+            estilo = list(WRITING_STYLES.keys())[int(seleccion_estilo) - 1]
+            break
+        print("Por favor, seleccione un número válido.")
+
+    # Selección de destino
+    print("\nDestinos de contenido disponibles:")
+    for idx, (destino, descripcion) in enumerate(CONTENT_DESTINATIONS.items(), 1):
+        print(f"{idx}) {destino}: {descripcion}")
+    
+    while True:
+        seleccion_destino = input("\nSeleccione el número del destino deseado: ").strip()
+        if seleccion_destino.isdigit() and 1 <= int(seleccion_destino) <= len(CONTENT_DESTINATIONS):
+            destino = list(CONTENT_DESTINATIONS.keys())[int(seleccion_destino) - 1]
+            break
+        print("Por favor, seleccione un número válido.")
+
     instrucciones = (
-        "Reescribe el texto provisto manteniendo el mensaje central."
-        " Explica brevemente qué cambios realizaste y por qué son útiles para"
-        " la presentación ante el centro de estudiantes."
+        f"Realiza dos cosas:\n\n"
+        f"1. TEXTO REESCRITO:\n"
+        f"Primero, reescribe el siguiente texto en un estilo {estilo.lower()} adaptado para {destino.lower()}. "
+        f"El texto debe mantener su mensaje central pero adaptarse al formato y tono apropiados.\n\n"
+        f"2. ANÁLISIS DE CAMBIOS:\n"
+        f"Después, proporciona un análisis detallado de los cambios realizados y explica por qué son "
+        f"apropiados para el destino elegido.\n\n"
+        f"Separa claramente las dos secciones con los encabezados 'TEXTO REESCRITO:' y 'ANÁLISIS DE CAMBIOS:'"
     )
-    if estilo:
-        instrucciones += f" Ajusta la redacción al estilo: {estilo}."
 
     prompt = f"{instrucciones}\n\nTexto original:\n{texto_original}"
     respuesta = _consulta_gemini(prompt)
@@ -263,7 +326,7 @@ def run_menu() -> None:
 
         choice = input("Seleccione una opción: ").strip()
         if choice == "4":
-            print("¡Gracias por visitar el stand del Centro de Estudiantes!\n")
+            print("¡Gracias por visitar el stand!\n")
             break
 
         option = opciones.get(choice)
