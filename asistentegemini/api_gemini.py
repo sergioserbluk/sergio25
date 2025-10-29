@@ -114,7 +114,6 @@ def obtener_respuesta(
             prompt,
             generation_config=_build_generation_config(params, config_overrides),
             safety_settings=safety_settings,
-            stop_sequences=stop_sequences,
         )
     except Exception as exc:  # pragma: no cover - dependencias externas
         return f"Error al consultar Gemini: {exc}"

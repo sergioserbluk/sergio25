@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-try:  # Permite ejecutar ``python asistentegemini/main.py`` y ``python -m``
-    from .menu import run_menu
-except ImportError:  # pragma: no cover - compatibilidad con ejecución directa
-    from menu import run_menu  # type: ignore
+from menu import run_menu
 
 
 def main() -> None:

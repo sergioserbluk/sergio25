@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
-from .api_gemini import obtener_respuesta
+from api_gemini import obtener_respuesta
 
 
 SESSIONS_DIR = Path("archivos/sesiones")
@@ -94,7 +94,15 @@ def _mostrar_respuesta(titulo: str, contenido: str) -> None:
     """Muestra la salida en pantalla con un título legible."""
 
     separador = "=" * len(titulo)
-    print(f"\n{titulo}\n{separador}\n{textwrap.fill(contenido, width=78)}\n")
+    print(f"\n{titulo}\n{separador}")
+    # Divide el contenido en párrafos y aplica el wrapping a cada uno
+    parrafos = contenido.split("\n")
+    for parrafo in parrafos:
+        if parrafo.strip():
+            print(textwrap.fill(parrafo, width=78))
+        else:
+            print()
+    print()
 
 
 def handle_ai_questions() -> None:
