@@ -1,0 +1,7 @@
+#el archivo gitignore se utiliza para especificar qué archivos o directorios deben ser ignorados por Git.
+#se lo nombra como .gitignore sin extensión.
+
+#archivos de entorno
+.env
+# conviene ignorar __pycache__ para evitar subir archivos compilados de python
+__pycache__/    
