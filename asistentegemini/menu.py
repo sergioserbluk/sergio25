@@ -7,12 +7,13 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, List, Optional
 
 from api_gemini import obtener_respuesta
 
 
 SESSIONS_DIR = Path("archivos/sesiones")
+DOCUMENTS_DIR = Path(__file__).resolve().parent / "documentos"
 
 
 @dataclass(frozen=True)
@@ -82,9 +83,9 @@ def _consulta_gemini(prompt: str) -> str:
     """Normaliza el prompt con un contexto común antes de llamar a Gemini."""
 
     contexto = (
-        "Eres un asistente del Centro de Estudiantes que apoya una feria "
-        "tecnológica. Responde siempre en español y ofrece sugerencias "
-        "aplicables al trabajo en equipo."
+        "Soy tu asistente virtual que apoya una feria tecnológica. "
+        "Responde siempre en español y ofrece sugerencias aplicables al "
+        "trabajo en equipo."
     )
     prompt_completo = f"{contexto}\n\n{prompt.strip()}"
     return obtener_respuesta(prompt_completo)
@@ -154,8 +155,34 @@ def handle_text_rewrite() -> None:
             buffer.append(line)
         texto_original = "\n".join(buffer).strip()
     elif source_choice == "2":
-        ruta = input("Ingrese la ruta del archivo .txt: ").strip()
-        texto_original = (_cargar_texto_desde_archivo(ruta) or "").strip()
+        documentos: List[Path] = sorted(DOCUMENTS_DIR.glob("*.txt"))
+        if not documentos:
+            print("No se encontraron archivos .txt en la carpeta de documentos.")
+            return
+
+        print("Archivos disponibles:")
+        for idx, archivo in enumerate(documentos, start=1):
+            print(f"{idx}) {archivo.name}")
+
+        seleccion = input(
+            "Seleccione el número del archivo que desea cargar (Enter para cancelar): "
+        ).strip()
+
+        if not seleccion:
+            print("Operación cancelada.")
+            return
+
+        if not seleccion.isdigit():
+            print("Selección no válida.")
+            return
+
+        indice = int(seleccion)
+        if not (1 <= indice <= len(documentos)):
+            print("Selección no válida.")
+            return
+
+        ruta = documentos[indice - 1]
+        texto_original = (_cargar_texto_desde_archivo(str(ruta)) or "").strip()
     else:
         print("Opción no válida.")
         return
