@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
-from api_gemini import obtener_respuesta
+from api_gemini import obtener_respuesta, GenerationParams
 
 
 SESSIONS_DIR = Path("archivos/sesiones")
@@ -89,6 +91,13 @@ def ensure_sessions_dir() -> None:
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def clear_screen() -> None:
+    """Limpia la pantalla para mantener la interfaz enfocada."""
+
+    # Usa 'cls' en Windows y 'clear' en otros sistemas
+    os.system("cls" if os.name == "nt" else "clear")
+
+
 def log_interaction(interaction_type: str, payload: Dict[str, object]) -> None:
     """Guarda cada interacción en un archivo JSONL fechado."""
 
@@ -101,19 +110,26 @@ def log_interaction(interaction_type: str, payload: Dict[str, object]) -> None:
         handler.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
 
 
-def _consulta_gemini(prompt: str) -> str:
-    """Normaliza el prompt con un contexto común antes de llamar a Gemini."""
+def _consulta_gemini(prompt: str, params: Optional[GenerationParams] = None) -> str:
+    """Normaliza el prompt con un contexto común antes de llamar a Gemini.
+
+    Acepta un parámetro opcional `params` para ajustar `max_tokens` u otros
+    valores de generación cuando se requiera una salida más larga.
+    """
 
     contexto = (
         "Soy un asistente virtual. Responde siempre en español de manera clara y "
         "precisa."
     )
     prompt_completo = f"{contexto}\n\n{prompt.strip()}"
-    return obtener_respuesta(prompt_completo)
+    return obtener_respuesta(prompt_completo, params=params)
 
 
 def _mostrar_respuesta(titulo: str, contenido: str) -> None:
     """Muestra la salida en pantalla con un título legible."""
+
+    # Limpiar pantalla para que el usuario se concentre en la respuesta
+    clear_screen()
 
     separador = "=" * len(titulo)
     print(f"\n{titulo}\n{separador}")
@@ -141,18 +157,25 @@ def _mostrar_respuesta(titulo: str, contenido: str) -> None:
                 print()
         print()  # Espacio entre secciones
     print()
+    # Pausa para que el usuario lea la respuesta antes de limpiar la pantalla
+    input("Presione Enter para volver al menú...")
 
 
 def handle_ai_questions() -> None:
     """Permite realizar preguntas abiertas a Gemini."""
 
+    # Mantener pantalla limpia al entrar a la sección
+    clear_screen()
     print("\n=== Consultas abiertas a Gemini ===")
     while True:
         question = input("Escriba su pregunta (o Enter para volver): ").strip()
         if not question:
             break
 
-        respuesta = _consulta_gemini(question)
+        print("\nProcesando respuesta... (puede tardar unos segundos)")
+        sys.stdout.flush()
+        params = GenerationParams(max_tokens=1024)
+        respuesta = _consulta_gemini(question, params=params)
         _mostrar_respuesta("Respuesta de Gemini", respuesta)
         log_interaction("pregunta_ia", {"prompt": question, "response": respuesta})
 
@@ -174,6 +197,8 @@ def _cargar_texto_desde_archivo(ruta: str) -> Optional[str]:
 def handle_text_rewrite() -> None:
     """Solicita a Gemini la reescritura de un texto dado."""
 
+    # Mantener pantalla limpia al entrar a la sección
+    clear_screen()
     print("\n=== Reescritura asistida ===")
     source_choice = input(
         "¿Cómo desea ingresar el texto?\n"
@@ -264,7 +289,11 @@ def handle_text_rewrite() -> None:
     )
 
     prompt = f"{instrucciones}\n\nTexto original:\n{texto_original}"
-    respuesta = _consulta_gemini(prompt)
+    # Solicitar mayor cantidad de tokens para evitar truncamiento en reescrituras largas
+    params = GenerationParams(max_tokens=1024)
+    print("\nProcesando respuesta... (puede tardar unos segundos)")
+    sys.stdout.flush()
+    respuesta = _consulta_gemini(prompt, params=params)
     _mostrar_respuesta("Reescritura propuesta", respuesta)
 
     log_interaction(
@@ -280,6 +309,8 @@ def handle_text_rewrite() -> None:
 def handle_predefined_examples() -> None:
     """Recurre a ejemplos curados para mostrar distintos estilos narrativos."""
 
+    # Mantener pantalla limpia al entrar a la sección
+    clear_screen()
     print("\n=== Ejemplos prediseñados ===")
     opciones = list(EXAMPLE_TEXTS.keys())
     for idx, nombre in enumerate(opciones, start=1):
@@ -298,7 +329,10 @@ def handle_predefined_examples() -> None:
     prompt = (
         f"{ejemplo['prompt']}\n\nTexto de partida:\n{ejemplo['texto']}"
     )
-    respuesta = _consulta_gemini(prompt)
+    print("\nProcesando respuesta... (puede tardar unos segundos)")
+    sys.stdout.flush()
+    params = GenerationParams(max_tokens=1024)
+    respuesta = _consulta_gemini(prompt, params=params)
     _mostrar_respuesta(f"Transformación: {clave}", respuesta)
     log_interaction(
         "ejemplo",
@@ -319,6 +353,7 @@ def run_menu() -> None:
     }
 
     while True:
+        clear_screen()
         print("Menú principal")
         for key, option in opciones.items():
             print(f"{key}) {option.label}")
